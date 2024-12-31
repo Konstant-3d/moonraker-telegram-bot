@@ -30,7 +30,12 @@ class PowerDevice:
         self.name: str = name
         self._state_lock = threading.Lock()
         self._device_on: bool = False
+        self._device_error: str = ""
         self._klippy: Klippy = klippy_
+
+    @property
+    def device_error(self) -> str:
+        return self._device_error
 
     @property
     def device_state(self) -> bool:
@@ -51,7 +56,11 @@ class PowerDevice:
             res = await self._klippy.make_request("POST", f"/machine/device_power/device?device={self.name}&action={'on' if state else 'off'}")
             if res.is_success:
                 self._device_on = state
+                self._device_error = ""
             else:
+                resp_json = orjson.loads(res.text)
+                if "error" in resp_json and "message" in resp_json["error"]:
+                    self._device_error = resp_json["error"]["message"]
                 logger.error("Power device switch failed: %s", res)
             return self._device_on
 
@@ -61,7 +70,11 @@ class PowerDevice:
             res = self._klippy.make_request_sync("POST", f"/machine/device_power/device?device={self.name}&action={'on' if state else 'off'}")
             if res.is_success:
                 self._device_on = state
+                self._device_error = ""
             else:
+                resp_json = orjson.loads(res.text)
+                if "error" in resp_json and "message" in resp_json["error"]:
+                    self._device_error = resp_json["error"]["message"]
                 logger.error("Power device switch failed: %s", res)
             return self._device_on
 

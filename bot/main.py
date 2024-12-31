@@ -46,6 +46,7 @@ with contextlib.suppress(ImportError):
 
 sys.modules["json"] = orjson
 
+
 logging.basicConfig(
     handlers=[logging.StreamHandler(sys.stdout)],
     format="%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s",
@@ -476,6 +477,8 @@ async def light_toggle(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 
     if light_power_device:
         mess = f"Device `{light_power_device.name}` toggled " + ("on" if await light_power_device.toggle_device() else "off")
+        if light_power_device.device_error:
+            mess += "\nError: `" + light_power_device.device_error + "`"
         await update.effective_message.reply_text(
             mess,
             parse_mode=ParseMode.HTML,
@@ -629,16 +632,24 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         restart_bot()
     elif query.data == "power_off_printer":
         await psu_power_device.switch_device(False)
+        if psu_power_device.device_error:
+            mess = f"Device `{psu_power_device.name}` failed to toggle off\nError: {psu_power_device.device_error}"
+        else:
+            mess = f"Device `{psu_power_device.name}` toggled off"
         await update.effective_message.reply_to_message.reply_text(
-            f"Device `{psu_power_device.name}` toggled off",
+            mess,
             parse_mode=ParseMode.HTML,
             quote=True,
         )
         await query.delete_message()
     elif query.data == "power_on_printer":
         await psu_power_device.switch_device(True)
+        if psu_power_device.device_error:
+            mess = f"Device `{psu_power_device.name}` failed to toggle on\nError: {psu_power_device.device_error}"
+        else:
+            mess = f"Device `{psu_power_device.name}` toggled on"
         await update.effective_message.reply_to_message.reply_text(
-            f"Device `{psu_power_device.name}` toggled on",
+            mess,
             parse_mode=ParseMode.HTML,
             quote=True,
         )
@@ -1087,16 +1098,22 @@ def start_bot(bot_token, socks):
     app_builder = Application.builder()
     (
         app_builder.base_url(configWrap.bot_config.api_url)
-        .get_updates_connection_pool_size(4)
+        .connection_pool_size(10)
+        .pool_timeout(10)
+        .connect_timeout(30)
         .read_timeout(30)
         .write_timeout(30)
+        .get_updates_connection_pool_size(4)
+        .get_updates_connect_timeout(30)
         .get_updates_read_timeout(30)
         .get_updates_write_timeout(30)
         .media_write_timeout(120)
         .token(bot_token)
     )
+
     if socks:
         app_builder.proxy(f"socks5://{socks}").get_updates_proxy(f"socks5://{socks}")
+
     application = app_builder.build()
 
     application.add_handler(MessageHandler(~filters.Chat(configWrap.secrets.chat_id), unknown_chat))

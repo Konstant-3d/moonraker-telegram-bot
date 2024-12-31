@@ -1,8 +1,11 @@
 from functools import wraps
 import logging
+import os
 import random
 import ssl
 import time
+
+os.environ.setdefault("WEBSOCKETS_MAX_LOG_SIZE", "1048576")  # pylint: disable=C0413
 
 from apscheduler.schedulers.base import BaseScheduler  # type: ignore
 import orjson
@@ -57,6 +60,7 @@ class WebSocketHelper:
 
         if config.bot_config.debug:
             logger.setLevel(logging.DEBUG)
+
         if logging_handler:
             logger.addHandler(logging_handler)
 
