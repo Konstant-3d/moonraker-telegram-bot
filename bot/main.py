@@ -47,8 +47,22 @@ with contextlib.suppress(ImportError):
 sys.modules["json"] = orjson
 
 
+class SensitiveFormatter(logging.Formatter):
+    """Formatter that removes sensitive information in urls."""
+
+    @staticmethod
+    def _filter(s):
+        return re.sub(r"\d{10}:[0-9A-Za-z_-]{35}", "**************", s)
+
+    def format(self, record):
+        original = logging.Formatter.format(self, record)
+        return self._filter(original)
+
+
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(SensitiveFormatter("%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"))
 logging.basicConfig(
-    handlers=[logging.StreamHandler(sys.stdout)],
+    handlers=[console_handler],
     format="%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s",
     level=logging.INFO,
 )
@@ -1184,7 +1198,7 @@ if __name__ == "__main__":
         maxBytes=26214400,
         backupCount=3,
     )
-    rotating_handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"))
+    rotating_handler.setFormatter(SensitiveFormatter("%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"))
     logger.addHandler(rotating_handler)
 
     logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -1200,6 +1214,8 @@ if __name__ == "__main__":
         logger.setLevel(logging.DEBUG)
         logging.getLogger("apscheduler").addHandler(rotating_handler)
         logging.getLogger("apscheduler").setLevel(logging.DEBUG)
+        logging.getLogger("httpx").setLevel(logging.DEBUG)
+        # logging.getLogger("httpcore").setLevel(logging.DEBUG)
 
     klippy = Klippy(configWrap, rotating_handler)
 
