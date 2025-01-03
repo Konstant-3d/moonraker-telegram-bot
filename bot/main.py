@@ -1236,11 +1236,10 @@ if __name__ == "__main__":
 
     ws_helper = WebSocketHelper(configWrap, klippy, notifier, timelapse, a_scheduler, rotating_handler)
 
-    a_scheduler.start()
-
     loop = asyncio.get_event_loop()
     loop.create_task(ws_helper.run_forever_async())
 
+    a_scheduler.start()
     a_scheduler.add_job(
         greeting_message,
         kwargs={"bot": bot_updater.bot},

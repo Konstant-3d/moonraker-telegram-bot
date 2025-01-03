@@ -338,13 +338,7 @@ class WebSocketHelper:
                                 self._scheduler.remove_job("ws_reschedule")
                     elif klippy_state in ["error", "shutdown", "startup"]:
                         await self._klippy.set_connected(False)
-                        self._scheduler.add_job(
-                            self.reshedule,
-                            "interval",
-                            seconds=2,
-                            id="ws_reschedule",
-                            replace_existing=True,
-                        )
+                        self._scheduler.add_job(self.reshedule, "interval", seconds=2, id="ws_reschedule", replace_existing=True, coalesce=True, misfire_grace_time=10)
                         state_message = message_result["state_message"]
                         if self._klippy.state_message != state_message and klippy_state != "startup":
                             self._klippy.state_message = state_message
@@ -352,13 +346,7 @@ class WebSocketHelper:
                     else:
                         logger.error("UnKnown klippy state: %s", klippy_state)
                         await self._klippy.set_connected(False)
-                        self._scheduler.add_job(
-                            self.reshedule,
-                            "interval",
-                            seconds=2,
-                            id="ws_reschedule",
-                            replace_existing=True,
-                        )
+                        self._scheduler.add_job(self.reshedule, "interval", seconds=2, id="ws_reschedule", replace_existing=True, coalesce=True, misfire_grace_time=10)
                     return
 
                 if "devices" in message_result:
@@ -375,13 +363,7 @@ class WebSocketHelper:
                 logger.warning("klippy disconnect detected with message: %s", json_message["method"])
                 await self.stop_all()
                 await self._klippy.set_connected(False)
-                self._scheduler.add_job(
-                    self.reshedule,
-                    "interval",
-                    seconds=2,
-                    id="ws_reschedule",
-                    replace_existing=True,
-                )
+                self._scheduler.add_job(self.reshedule, "interval", seconds=2, id="ws_reschedule", replace_existing=True, coalesce=True, misfire_grace_time=10)
 
             if "params" not in json_message:
                 return
@@ -446,7 +428,7 @@ class WebSocketHelper:
         ):
             try:
                 self._ws = websocket
-                self._scheduler.add_job(self.reshedule, "interval", seconds=2, id="ws_reschedule", replace_existing=True)
+                self._scheduler.add_job(self.reshedule, "interval", seconds=2, id="ws_reschedule", replace_existing=True, coalesce=True, misfire_grace_time=10)
                 # async for message in self._ws:
                 #     await self.websocket_to_message(message)
 
