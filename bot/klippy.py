@@ -1,4 +1,5 @@
 # Todo: class for printer states!
+import asyncio
 from datetime import datetime, timedelta
 from io import BytesIO
 import logging
@@ -29,6 +30,7 @@ class PowerDevice:
     def __init__(self, name: str, klippy_: "Klippy"):
         self.name: str = name
         self._state_lock = threading.Lock()
+        self._state_lock_async = asyncio.Lock()
         self._device_on: bool = False
         self._device_error: str = ""
         self._klippy: Klippy = klippy_
@@ -52,7 +54,7 @@ class PowerDevice:
 
     # Todo: return exception?
     async def switch_device(self, state: bool) -> bool:
-        with self._state_lock:
+        async with self._state_lock_async:
             res = await self._klippy.make_request("POST", f"/machine/device_power/device?device={self.name}&action={'on' if state else 'off'}")
             if res.is_success:
                 self._device_on = state

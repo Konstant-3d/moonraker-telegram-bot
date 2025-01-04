@@ -1114,13 +1114,15 @@ def start_bot(bot_token, socks):
     app_builder = Application.builder()
     (
         app_builder.base_url(configWrap.bot_config.api_url)
-        .connection_pool_size(10)
-        .pool_timeout(10)
-        .connect_timeout(30)
+        .connection_pool_size(265)
+        .pool_timeout(1)
+        .connect_timeout(5)
         .read_timeout(30)
         .write_timeout(30)
+        .concurrent_updates(4)
         .get_updates_connection_pool_size(4)
-        .get_updates_connect_timeout(30)
+        .get_updates_pool_timeout(1)
+        .get_updates_connect_timeout(5)
         .get_updates_read_timeout(30)
         .get_updates_write_timeout(30)
         .media_write_timeout(120)
@@ -1240,6 +1242,7 @@ if __name__ == "__main__":
     loop.create_task(ws_helper.run_forever_async())
 
     a_scheduler.start()
+
     a_scheduler.add_job(
         greeting_message,
         kwargs={"bot": bot_updater.bot},
