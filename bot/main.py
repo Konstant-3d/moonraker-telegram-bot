@@ -1171,6 +1171,13 @@ def start_bot(bot_token, socks):
     return application
 
 
+async def start_scheduller(_: ContextTypes.DEFAULT_TYPE):
+    a_scheduler.start()
+    # bot_updater.create_task(ws_helper.run_forever_async())
+    loop = asyncio.get_event_loop()
+    loop.create_task(ws_helper.run_forever_async())
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Moonraker Telegram Bot")
     parser.add_argument(
@@ -1238,16 +1245,12 @@ if __name__ == "__main__":
 
     ws_helper = WebSocketHelper(configWrap, klippy, notifier, timelapse, a_scheduler, rotating_handler)
 
-    loop = asyncio.get_event_loop()
-    loop.create_task(ws_helper.run_forever_async())
-
-    a_scheduler.start()
-
     a_scheduler.add_job(
         greeting_message,
         kwargs={"bot": bot_updater.bot},
     )
 
+    bot_updater.job_queue.run_once(start_scheduller, 1)
     bot_updater.run_polling(allowed_updates=Update.ALL_TYPES)
 
     logger.info("Shutting down the bot")
