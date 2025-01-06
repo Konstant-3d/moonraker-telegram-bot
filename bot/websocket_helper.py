@@ -440,5 +440,6 @@ class WebSocketHelper:
             except Exception as ex:
                 # Todo: add some TG notification?
                 logger.error(ex)
+                await self._klippy.set_connected(False)
                 if self._scheduler.get_job("ws_reschedule"):
                     self._scheduler.remove_job("ws_reschedule")

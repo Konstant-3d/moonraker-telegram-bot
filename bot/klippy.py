@@ -193,7 +193,10 @@ class Klippy:
         self.printing = False
         self.paused = False
         self._reset_file_info()
-        await self._update_printer_objects()
+        if new_value:
+            await self._update_printer_objects()
+        else:
+            self._objects_list = []
 
     # Todo: save macros list until klippy restart
     @property
