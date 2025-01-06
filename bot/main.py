@@ -1172,8 +1172,13 @@ def start_bot(bot_token, socks):
     return application
 
 
-async def start_scheduler(_: ContextTypes.DEFAULT_TYPE):
+async def start_scheduler(context: ContextTypes.DEFAULT_TYPE):
     a_scheduler.start()
+    a_scheduler.add_job(
+        greeting_message,
+        # kwargs={"bot": bot_updater.bot},
+        kwargs={"bot": context.bot},
+    )
     # bot_updater.create_task(ws_helper.run_forever_async())
     loop = asyncio.get_event_loop()
     loop.create_task(ws_helper.run_forever_async())
@@ -1245,11 +1250,6 @@ if __name__ == "__main__":
     notifier = Notifier(configWrap, bot_updater.bot, klippy, cameraWrap, a_scheduler, rotating_handler)
 
     ws_helper = WebSocketHelper(configWrap, klippy, notifier, timelapse, a_scheduler, rotating_handler)
-
-    a_scheduler.add_job(
-        greeting_message,
-        kwargs={"bot": bot_updater.bot},
-    )
 
     bot_updater.job_queue.run_once(start_scheduler, 1)
     bot_updater.run_polling(allowed_updates=Update.ALL_TYPES)

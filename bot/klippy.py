@@ -538,7 +538,7 @@ class Klippy:
                 resp.raise_for_status()
         except httpx.HTTPError as err:
             logger.error("Get status failed `%s`", err)
-            return f"Filed to get status: `{err}`"
+            return f"Failed to get status: `{err}`"
 
         resp_json = orjson.loads(resp.text)
         print_stats = resp_json["result"]["status"]["print_stats"]
