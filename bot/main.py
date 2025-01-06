@@ -396,15 +396,16 @@ async def send_logs(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         except FileNotFoundError as err:
             logger.warning(err)
 
-    await update.effective_message.reply_text(text=f"{await klippy.get_versions_info()}\nUpload logs to analyzer /upload_logs", disable_notification=notifier.silent_commands, quote=True)
     if logs_list:
-        await update.effective_message.reply_media_group(logs_list, disable_notification=notifier.silent_commands, quote=True)
+        await update.effective_message.reply_media_group(logs_list, disable_notification=notifier.silent_commands, quote=True, write_timeout=120)
     else:
         await update.effective_message.reply_text(
             text=f"No logs found in log_path `{configWrap.bot_config.log_path}`",
             disable_notification=notifier.silent_commands,
             quote=True,
         )
+
+    await update.effective_message.reply_text(text=f"{await klippy.get_versions_info()}\nUpload logs to analyzer /upload_logs", disable_notification=notifier.silent_commands, quote=True)
 
 
 async def upload_logs(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1116,16 +1117,16 @@ def start_bot(bot_token, socks):
         app_builder.base_url(configWrap.bot_config.api_url)
         .connection_pool_size(265)
         .pool_timeout(1)
-        .connect_timeout(5)
-        .read_timeout(30)
-        .write_timeout(30)
+        .connect_timeout(10)
+        .read_timeout(45)
+        .write_timeout(60)
+        .media_write_timeout(240)
         .concurrent_updates(4)
         .get_updates_connection_pool_size(4)
         .get_updates_pool_timeout(1)
-        .get_updates_connect_timeout(5)
-        .get_updates_read_timeout(30)
-        .get_updates_write_timeout(30)
-        .media_write_timeout(120)
+        .get_updates_connect_timeout(10)
+        .get_updates_read_timeout(45)
+        .get_updates_write_timeout(60)
         .token(bot_token)
     )
 
