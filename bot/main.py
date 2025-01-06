@@ -1121,7 +1121,7 @@ def start_bot(bot_token, socks):
         .read_timeout(45)
         .write_timeout(60)
         .media_write_timeout(240)
-        .concurrent_updates(4)
+        .concurrent_updates(2)
         .get_updates_connection_pool_size(4)
         .get_updates_pool_timeout(1)
         .get_updates_connect_timeout(10)
