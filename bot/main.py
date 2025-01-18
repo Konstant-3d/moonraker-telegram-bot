@@ -385,7 +385,11 @@ async def send_logs(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         logger.warning("Undefined effective message or bot")
         return
 
-    await update.effective_message.get_bot().send_chat_action(chat_id=configWrap.secrets.chat_id, action=ChatAction.UPLOAD_DOCUMENT)
+    resp_message = await update.effective_message.reply_text(
+        "Collecting logs",
+        disable_notification=notifier.silent_commands,
+        quote=True,
+    )
 
     logs_list: List[Union[InputMediaAudio, InputMediaDocument, InputMediaPhoto, InputMediaVideo]] = []
     for log_file in prepare_log_files()[0]:
@@ -397,15 +401,12 @@ async def send_logs(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
             logger.warning(err)
 
     if logs_list:
+        await resp_message.edit_text("Uploading logs")
+        await update.effective_message.get_bot().send_chat_action(chat_id=configWrap.secrets.chat_id, action=ChatAction.UPLOAD_DOCUMENT)
         await update.effective_message.reply_media_group(logs_list, disable_notification=notifier.silent_commands, quote=True, write_timeout=120)
+        await resp_message.edit_text(text=f"{await klippy.get_versions_info()}\nUpload logs to analyzer /upload_logs")
     else:
-        await update.effective_message.reply_text(
-            text=f"No logs found in log_path `{configWrap.bot_config.log_path}`",
-            disable_notification=notifier.silent_commands,
-            quote=True,
-        )
-
-    await update.effective_message.reply_text(text=f"{await klippy.get_versions_info()}\nUpload logs to analyzer /upload_logs", disable_notification=notifier.silent_commands, quote=True)
+        await resp_message.edit_text(text=f"No logs found in log_path `{configWrap.bot_config.log_path}`")
 
 
 async def upload_logs(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
@@ -413,13 +414,15 @@ async def upload_logs(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         logger.warning("Undefined effective message or bot")
         return
 
+    resp_message = await update.effective_message.reply_text(
+        "Collecting logs",
+        disable_notification=notifier.silent_commands,
+        quote=True,
+    )
+
     files_list, dmesg_success, dmesg_error = prepare_log_files()
     if not dmesg_success:
-        await update.effective_message.reply_text(
-            text=f"Dmesg log file creation error {dmesg_error}",
-            disable_notification=notifier.silent_commands,
-            quote=True,
-        )
+        await resp_message.edit_text(f"Dmesg log file creation error {dmesg_error}")
         return
 
     if Path(f"{configWrap.bot_config.log_path}/logs.tar.xz").exists():
@@ -430,23 +433,18 @@ async def upload_logs(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
             if Path(f"{configWrap.bot_config.log_path}/{file}").exists():
                 tar.add(Path(f"{configWrap.bot_config.log_path}/{file}"), arcname=file)
 
+    await resp_message.edit_text("Uploading logs to parser")
+    await update.effective_message.get_bot().send_chat_action(chat_id=configWrap.secrets.chat_id, action=ChatAction.UPLOAD_DOCUMENT)
+
     with open(f"{configWrap.bot_config.log_path}/logs.tar.xz", "rb") as log_archive_ojb:
         resp = httpx.post(url="https://coderus.openrepos.net/klipper_logs", files={"tarfile": log_archive_ojb}, follow_redirects=False, timeout=25)
         if resp.status_code < 400:
             logs_path = resp.headers["location"]
             logger.info(logs_path)
-            await update.effective_message.reply_text(
-                text=f"Logs are available at https://coderus.openrepos.net{logs_path}",
-                disable_notification=notifier.silent_commands,
-                quote=True,
-            )
+            await resp_message.edit_text(f"Logs are available at https://coderus.openrepos.net{logs_path}")
         else:
             logger.error(resp.status_code)
-            await update.effective_message.reply_text(
-                text=f"Logs upload failed `{resp.status_code}`",
-                disable_notification=notifier.silent_commands,
-                quote=True,
-            )
+            await resp_message.edit_text(f"Logs upload failed `{resp.status_code}`")
 
 
 def restart_bot() -> None:
