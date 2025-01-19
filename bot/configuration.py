@@ -430,6 +430,15 @@ class TelegramUIConfig(ConfigHelper):
     def is_present_in_require_confirmation(self, command: str) -> bool:
         return command.strip() in self.require_confirmation
 
+    def confirm_macro(self) -> bool:
+        return "macro" in self.require_confirmation
+
+    def confirm_command(self) -> bool:
+        return "command" in self.require_confirmation
+
+    def confirm_gcode(self) -> bool:
+        return "gcode" in self.require_confirmation
+
 
 class StatusMessageContentConfig(ConfigHelper):
     _section = "status_message_content"
