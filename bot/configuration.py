@@ -364,7 +364,7 @@ class TelegramUIConfig(ConfigHelper):
         "show_private_macros",
         "eta_source",
         "status_message_m117_update",
-        "require_confirmation_bot_commands",
+        "require_confirmation",
     ]
     _MESSAGE_CONTENT = [
         "progress",
@@ -405,12 +405,12 @@ class TelegramUIConfig(ConfigHelper):
         self.pin_status_single_message: bool = self._get_boolean("pin_status_single_message", default=True)
         self.status_message_m117_update: bool = self._get_boolean("status_message_m117_update", default=False)
         self.send_greeting_message: bool = self._get_boolean("send_greeting_message", default=True)
-        self.require_confirmation_bot_commands: List[str] = self._get_list(
-            "require_confirmation_bot_commands", default=["logs", "upload_logs", "shutdown", "restart", "cancel", "fw_restart", "emergency", "reboot", "power", "bot_restart"]
+        self.require_confirmation: List[str] = self._get_list(
+            "require_confirmation", default=["logs", "logs_upload", "shutdown", "restart", "cancel", "fw_restart", "emergency", "reboot", "power", "bot_restart"]
         )
 
-    def is_present_in_require_confirmation_commands(self, command: str) -> bool:
-        return command.strip() in self.require_confirmation_bot_commands
+    def is_present_in_require_confirmation(self, command: str) -> bool:
+        return command.strip() in self.require_confirmation
 
 
 class StatusMessageContentConfig(ConfigHelper):
