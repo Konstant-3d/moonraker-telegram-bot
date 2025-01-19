@@ -179,7 +179,7 @@ async def status(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         logger.warning("Undefined effective message or bot")
         return
 
-    if configWrap.telegram_ui.is_present_in_require_confirmation("status"):
+    if configWrap.telegram_ui.is_present_in_require_confirmation("status") or configWrap.telegram_ui.is_present_in_require_confirmation("command"):
         await command_confirm_message(update, text="Update status?", callback_mess="status:")
     else:
         await status_no_confirm(update.effective_message)
@@ -234,7 +234,7 @@ async def get_ip(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         logger.warning("Undefined effective message or bot")
         return
 
-    if configWrap.telegram_ui.is_present_in_require_confirmation("ip"):
+    if configWrap.telegram_ui.is_present_in_require_confirmation("ip") or configWrap.telegram_ui.is_present_in_require_confirmation("command"):
         await command_confirm_message(update, text="Show ip?", callback_mess="ip:")
     else:
         await get_ip_no_confirm(update.effective_message)
@@ -279,7 +279,7 @@ async def get_video(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         logger.warning("Undefined effective message or bot")
         return
 
-    if configWrap.telegram_ui.is_present_in_require_confirmation("video"):
+    if configWrap.telegram_ui.is_present_in_require_confirmation("video") or configWrap.telegram_ui.is_present_in_require_confirmation("command"):
         await command_confirm_message(update, text="Get video?", callback_mess="video:")
     else:
         await get_video_no_confirm(update.effective_message)
@@ -321,7 +321,7 @@ async def command_confirm_message_ext(update: Update, command: str, confirm_text
         return
 
     await update.effective_message.get_bot().send_chat_action(chat_id=configWrap.secrets.chat_id, action=ChatAction.TYPING)
-    if configWrap.telegram_ui.is_present_in_require_confirmation(command):
+    if configWrap.telegram_ui.is_present_in_require_confirmation(command) or configWrap.telegram_ui.is_present_in_require_confirmation("command"):
         await update.effective_message.reply_text(
             confirm_text,
             reply_markup=confirm_keyboard(callback_mess),
@@ -471,7 +471,7 @@ async def send_logs(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         logger.warning("Undefined effective message or bot")
         return
 
-    if configWrap.telegram_ui.is_present_in_require_confirmation("logs"):
+    if configWrap.telegram_ui.is_present_in_require_confirmation("logs") or configWrap.telegram_ui.is_present_in_require_confirmation("command"):
         await command_confirm_message(update, text="Send logs to chat?", callback_mess="send_logs:")
     else:
         await send_logs_no_confirm(update.effective_message)
@@ -516,7 +516,7 @@ async def upload_logs(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         logger.warning("Undefined effective message or bot")
         return
 
-    if configWrap.telegram_ui.is_present_in_require_confirmation("logs_upload"):
+    if configWrap.telegram_ui.is_present_in_require_confirmation("logs_upload") or configWrap.telegram_ui.is_present_in_require_confirmation("command"):
         await command_confirm_message(update, text="Upload logs?", callback_mess="logs_upload:")
     else:
         await upload_logs_no_confirm(update.effective_message)
@@ -551,7 +551,7 @@ async def power_toggle(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         logger.warning("Undefined effective message or bot")
         return
 
-    if configWrap.telegram_ui.is_present_in_require_confirmation("power"):
+    if configWrap.telegram_ui.is_present_in_require_confirmation("power") or configWrap.telegram_ui.is_present_in_require_confirmation("command"):
         await command_confirm_message(update, text="Toggle power device?", callback_mess="power_toggle:")
     else:
         await power_toggle_no_confirm(update.effective_message)
@@ -581,7 +581,7 @@ async def light_toggle(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         logger.warning("Undefined effective message")
         return
 
-    if configWrap.telegram_ui.is_present_in_require_confirmation("light"):
+    if configWrap.telegram_ui.is_present_in_require_confirmation("light") or configWrap.telegram_ui.is_present_in_require_confirmation("command"):
         await command_confirm_message(update, text="Toggle light device?", callback_mess="light_toggle:")
     else:
         await light_toggle_no_confirm(update.effective_message)
@@ -820,7 +820,7 @@ async def get_gcode_files(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         logger.warning("Undefined effective message or bot")
         return
 
-    if configWrap.telegram_ui.is_present_in_require_confirmation("files"):
+    if configWrap.telegram_ui.is_present_in_require_confirmation("files") or configWrap.telegram_ui.is_present_in_require_confirmation("command"):
         await command_confirm_message(update, text="List gcode files?", callback_mess="files:")
     else:
         await get_gcode_files_no_confirm(update.effective_message)
@@ -892,7 +892,7 @@ async def services_keyboard(update: Update, _: ContextTypes.DEFAULT_TYPE) -> Non
         logger.warning("Undefined effective message or bot")
         return
 
-    if configWrap.telegram_ui.is_present_in_require_confirmation("services"):
+    if configWrap.telegram_ui.is_present_in_require_confirmation("services") or configWrap.telegram_ui.is_present_in_require_confirmation("command"):
         await command_confirm_message(update, text="List services?", callback_mess="services:")
     else:
         await services_keyboard_no_confirm(update.effective_message)
@@ -906,7 +906,11 @@ async def exec_gcode(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 
     if update.effective_message.text != "/gcode":
         command = update.effective_message.text.replace("/gcode ", "")
-        if configWrap.telegram_ui.is_present_in_require_confirmation(command) or configWrap.telegram_ui.is_present_in_require_confirmation("gcode"):
+        if (
+            configWrap.telegram_ui.is_present_in_require_confirmation(command)
+            or configWrap.telegram_ui.is_present_in_require_confirmation("gcode")
+            or configWrap.telegram_ui.is_present_in_require_confirmation("command")
+        ):
             await command_confirm_message(update, text=f"Execute gcode:`'{command}'`?", callback_mess=f"gcode:{command}")
         else:
             await ws_helper.execute_ws_gcode_script(command)
@@ -943,7 +947,7 @@ async def get_macros(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         logger.warning("Undefined effective message or bot")
         return
 
-    if configWrap.telegram_ui.is_present_in_require_confirmation("macros"):
+    if configWrap.telegram_ui.is_present_in_require_confirmation("macros") or configWrap.telegram_ui.is_present_in_require_confirmation("command"):
         await command_confirm_message(update, text="List macros?", callback_mess="macros:")
     else:
         await get_macros_no_confirm(update.effective_message)
@@ -1161,7 +1165,7 @@ async def help_command(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         logger.warning("Undefined effective message")
         return
 
-    if configWrap.telegram_ui.is_present_in_require_confirmation("help"):
+    if configWrap.telegram_ui.is_present_in_require_confirmation("help") or configWrap.telegram_ui.is_present_in_require_confirmation("command"):
         await command_confirm_message(update, text="Show help?", callback_mess="help:")
     else:
         await help_command_no_confirm(update.effective_message)
