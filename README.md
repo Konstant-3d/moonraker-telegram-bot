@@ -2,24 +2,18 @@
 
 ![image](https://user-images.githubusercontent.com/51682059/140623765-3b839b4b-40c2-4f87-8969-6cb609f2c5f1.png)
 
+Основная идея этого проекта — предоставить вам способ управления и мониторинга вашего принтера без необходимости настраивать vpn, открывать домашнюю сеть или заниматься любыми другими сетевыми вуду.
+Кроме того, вы получаете преимущества push-уведомлений, которые всегда у вас в кармане, и удобный малозатратный по трафику способ проверки хода печати, когда вы не находитесь рядом с принтером.
 
-The general idea of this project is to provide you with a way to control and monitor your printer without having to setup a vpn, opening your home network, or doing any sort of other network-related vodoo.
-In addition you get the benefits of push-style notifications always in your pocket, and a bandwidth-friendly way to check up on your print progress, when not near the printer.
+Как и всегда с подобными решениями, мы любезно напоминаем вам не печатать без присмотра и всегда принимать все необходимые меры предосторожности против опасности возгорания.
 
-As always with solutions like these, we kindly remind you not to print unattended, and always to take all necessary precautions against fire hazards.
+## Возможности и установка:
 
+Почитайте нашу [wiki](https://github.com/nlef/moonraker-telegram-bot/wiki) для ознакомления и инструкцией по установке и описанием возможностей.
 
-## Features and Installation:
+## Сообщения об ошибках
 
-Please check out our [wiki](https://github.com/nlef/moonraker-telegram-bot/wiki) for installation instructions and detailed feature descriptions.
-
-## Issues and bug reports
-
-We will be happy to assist you with any issues that you have, as long as you can form a coherent sentence and are polite in your requests.
-Please open an issue, and we will try our best to reproduce and fix it.
-Feature requests and ideas are also more than welcome.
-
-When writing issues/contacting for support please attach the 'telegram.log' as well as the output of `sudo journalctl -r -u moonraker-telegram-bot`.
+Это форк проекта [moonraker-telegram-bot](https://github.com/nlef/moonraker-telegram-bot) в котором добавлен только русская локализация, поэтому с проблемами и предложению лучше обращаться к автору.
 
 
 
