@@ -506,25 +506,25 @@ class Klippy:
         return await self._populate_with_thumb(self._thumbnail_path, message)
 
     def _get_printing_file_info(self, message_pre: str = "") -> str:
-        message = f"Printing: {self.printing_filename} \n" if not message_pre else f"{message_pre}: {self.printing_filename} \n"
+        message = f"Печатается: {self.printing_filename} \n" if not message_pre else f"{message_pre}: {self.printing_filename} \n" # my Printing: {self.printing_filename} \n" if not message_pre else f"{message_pre}: {self.printing_filename} \n
         if "progress" in self._message_parts:
-            message += f"Progress {round(self.printing_progress * 100, 0)}%"
+            message += f"Напечатано {round(self.printing_progress * 100, 0)}% \n" # my Progress {round(self.printing_progress * 100, 0)}%
         if "height" in self._message_parts:
-            message += f", height: {round(self.printing_height, 2)}mm\n" if self.printing_height > 0.0 else "\n"
+           message += f", Высота: {round(self.printing_height, 2)}mm\n" if self.printing_height > 0.0 else "\n" #my height
         if self.filament_total > 0.0:
             if "filament_length" in self._message_parts:
-                message += f"Filament: {round(self.filament_used / 1000, 2)}m / {round(self.filament_total / 1000, 2)}m"
+                message += f"Расход филамента: {round(self.filament_used / 1000, 2)}m / {round(self.filament_total / 1000, 2)}m" # my Filament: {round(self.filament_used / 1000, 2)}m / {round(self.filament_total / 1000, 2)}m
             if self.filament_weight > 0.0 and "filament_weight" in self._message_parts:
-                message += f", weight: {round(self._filament_weight_used(), 2)}/{self.filament_weight}g"
+                message += f", Вес: {round(self._filament_weight_used(), 2)}/{self.filament_weight}g" #my weight
             message += "\n"
         if "print_duration" in self._message_parts:
-            message += f"Printing for {timedelta(seconds=round(self.printing_duration))}\n"
+            message += f"Уже печатается {timedelta(seconds=round(self.printing_duration))}\n" # my Printing for {timedelta(seconds=round(self.printing_duration))}\n
 
         eta = self._get_eta()
         if "eta" in self._message_parts:
-            message += f"Estimated time left: {eta}\n"
+            message += f"До конца печати: {eta}\n" # my Estimated time left: {eta}\n
         if "finish_time" in self._message_parts:
-            message += f"Finish at {datetime.now() + eta:%Y-%m-%d %H:%M}\n"
+            message += f"Печать завершится {datetime.now() + eta:%Y-%m-%d %H:%M}\n" # my Finish at {datetime.now() + eta:%Y-%m-%d %H:%M}\n
 
         return message
 
@@ -549,18 +549,18 @@ class Klippy:
             if not self.printing_filename:
                 await self.set_printing_filename(print_stats["filename"])
         elif print_stats["state"] == "paused":
-            message += "Printing paused\n"
+            message += "Печать поставлена на паузу\n" # my Printing paused\n
         elif print_stats["state"] == "cancelled":
-            message += "Printing cancelled\n"
+            message += "Печать отменена\n" # my Printing cancelled\n
         elif print_stats["state"] == "complete":
-            message += "Printing complete\n"
+            message += "Печать завершена\n" # my Printing complete\n
         elif print_stats["state"] == "standby":
-            message += "Printer standby\n"
+            message += "Принтер в режиме ожидания\n" # my Printer standby\n
         elif print_stats["state"] == "error":
-            message += "Printing error\n"
+            message += "Ошибка печати\n" # my Printing error\n
             if "message" in print_stats and print_stats["message"]:
                 message += f"{print_stats['message']}\n"
-
+       
         message += "\n"
         if self.printing_filename:
             message += self._get_printing_file_info()
@@ -574,11 +574,11 @@ class Klippy:
         resp = orjson.loads((await self.make_request("GET", f"/server/files/metadata?filename={urllib.parse.quote(filename)}")).text)["result"]
         message += "\n"
         if "filament_total" in resp and resp["filament_total"] > 0.0:
-            message += f"Filament: {round(resp['filament_total'] / 1000, 2)}m"
+            message += f"Израсходуется филамента в м.: {round(resp['filament_total'] / 1000, 2)}m" #my Filament
             if "filament_weight_total" in resp and resp["filament_weight_total"] > 0.0:
-                message += f", weight: {resp['filament_weight_total']}g"
+                message += f", Израсходуется филамента в гр.: {resp['filament_weight_total']}g" #my weight
         if "estimated_time" in resp and resp["estimated_time"] > 0.0:
-            message += f"\nEstimated printing time: {timedelta(seconds=resp['estimated_time'])}"
+            message += f"\nОриентировочное время печати: {timedelta(seconds=resp['estimated_time'])}" #my Estimated printing time
 
         thumb_path = ""
         if "thumbnails" in resp:

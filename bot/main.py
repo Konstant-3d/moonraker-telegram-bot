@@ -126,7 +126,7 @@ executors_pool: ThreadPoolExecutor = ThreadPoolExecutor(2, thread_name_prefix="b
 async def echo_unknown(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     if update.message is None:
         return
-    await update.message.reply_text(f"unknown command: {update.message.text}", quote=True)
+    await update.message.reply_text(f"Неизвестная команда: {update.message.text}", quote=True) #my unknown command
 
 
 async def unknown_chat(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
@@ -340,25 +340,25 @@ async def command_exec(effective_message: Message, exec_text: str, exec_func: Co
 
 async def pause_printing(update: Update, __: ContextTypes.DEFAULT_TYPE) -> None:
     await command_confirm_message_ext(
-        update=update, command="pause", confirm_text="Pause printing?", exec_text="Pausing printing", callback_mess="pause_printing", exec_func=ws_helper.manage_printing("pause")
+        update=update, command="pause", confirm_text="Поставить печать на паузу?", exec_text="Печать на паузе", callback_mess="pause_printing", exec_func=ws_helper.manage_printing("pause") #myupdate=update, command="pause", confirm_text="Pause printing?", exec_text="Pausing printing", callback_mess="pause_printing", exec_func=ws_helper.manage_printing("pause")
     )
 
 
 async def resume_printing(update: Update, __: ContextTypes.DEFAULT_TYPE) -> None:
     await command_confirm_message_ext(
-        update=update, command="resume", confirm_text="Resume printing?", exec_text="Resuming printing", callback_mess="resume_printing", exec_func=ws_helper.manage_printing("resume")
+        update=update, command="resume", confirm_text="Продолжить печать?", exec_text="Печать продолжена", callback_mess="resume_printing", exec_func=ws_helper.manage_printing("resume") #my update=update, command="resume", confirm_text="Resume printing?", exec_text="Resuming printing", callback_mess="resume_printing", exec_func=ws_helper.manage_printing("resume")
     )
 
 
 async def cancel_printing(update: Update, __: ContextTypes.DEFAULT_TYPE) -> None:
     await command_confirm_message_ext(
-        update=update, command="cancel", confirm_text="Cancel printing?", exec_text="Canceling printing", callback_mess="cancel_printing", exec_func=ws_helper.manage_printing("cancel")
+        update=update, command="cancel", confirm_text="Отменить печать?", exec_text="Печать отменена", callback_mess="cancel_printing", exec_func=ws_helper.manage_printing("cancel") #my update=update, command="cancel", confirm_text="Cancel printing?", exec_text="Canceling printing", callback_mess="cancel_printing", exec_func=ws_helper.manage_printing("cancel")
     )
 
 
 async def emergency_stop(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     await command_confirm_message_ext(
-        update=update, command="emergency", confirm_text="Execute emergency stop?", exec_text="Executing emergency stop", callback_mess="emergency_stop", exec_func=ws_helper.emergency_stop_printer()
+        update=update, command="emergency", confirm_text="Выполнить аварийную остановку?", exec_text="Аварийная остановка выполнена", callback_mess="emergency_stop", exec_func=ws_helper.emergency_stop_printer() #my update=update, command="emergency", confirm_text="Execute emergency stop?", exec_text="Executing emergency stop", callback_mess="emergency_stop", exec_func=ws_helper.emergency_stop_printer()
     )
 
 
@@ -366,8 +366,8 @@ async def firmware_restart(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None
     await command_confirm_message_ext(
         update=update,
         command="fw_restart",
-        confirm_text="Restart klipper firmware?",
-        exec_text="Restarting klipper firmware",
+        confirm_text="Перезагрузить Klipper?", #my Restart klipper firmware?
+        exec_text="Klipper перезагружен", #my Restarting klipper firmware
         callback_mess="firmware_restart",
         exec_func=ws_helper.firmware_restart_printer(),
     )
@@ -375,16 +375,16 @@ async def firmware_restart(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None
 
 async def shutdown_host(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     await command_confirm_message_ext(
-        update=update, command="shutdown", confirm_text="Shutdown host?", exec_text="Shutting down host", callback_mess="shutdown_host", exec_func=ws_helper.shutdown_pi_host()
+        update=update, command="shutdown", confirm_text="Выключить хост?", exec_text="Хост был выключен!", callback_mess="shutdown_host", exec_func=ws_helper.shutdown_pi_host() #my update=update, command="shutdown", confirm_text="Shutdown host?", exec_text="Shutting down host", callback_mess="shutdown_host", exec_func=ws_helper.shutdown_pi_host()
     )
 
 
 async def reboot_host(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
-    await command_confirm_message_ext(update=update, command="reboot", confirm_text="Reboot host?", exec_text="Rebooting host", callback_mess="reboot_host", exec_func=ws_helper.reboot_pi_host())
+    await command_confirm_message_ext(update=update, command="reboot", confirm_text="Перезагрузить хост?", exec_text="Хост перезагружен", callback_mess="reboot_host", exec_func=ws_helper.reboot_pi_host()) #my command_confirm_message_ext(update=update, command="reboot", confirm_text="Reboot host?", exec_text="Rebooting host", callback_mess="reboot_host", exec_func=ws_helper.reboot_pi_host())
 
 
 async def bot_restart(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
-    await command_confirm_message_ext(update=update, command="bot_restart", confirm_text="Restart bot?", exec_text="Restarting bot", callback_mess="bot_restart", exec_func=restart_bot())
+    await command_confirm_message_ext(update=update, command="bot_restart", confirm_text="Перезагрузить ТГ бота?", exec_text="ТГ бот был перезагружен", callback_mess="bot_restart", exec_func=restart_bot()) #my command_confirm_message_ext(update=update, command="bot_restart", confirm_text="Restart bot?", exec_text="Restarting bot", callback_mess="bot_restart", exec_func=restart_bot())
 
 
 def prepare_log_files() -> tuple[List[str], bool, Optional[str]]:
@@ -646,7 +646,7 @@ async def print_file_dialog_handler(update: Update, context: ContextTypes.DEFAUL
             ),
         ]
     ]
-    start_pre_mess = "Start printing file:"
+    start_pre_mess = "Напечатать файл:" #my Start printing file
     message, bio = await klippy.get_file_info_by_name(pri_filename, f"{start_pre_mess}{pri_filename}?")
     await update.effective_message.reply_to_message.reply_photo(
         photo=bio,
@@ -698,24 +698,24 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif update.effective_message.reply_to_message is None:
         logger.error("Undefined reply_to_message for %s", update.effective_message.to_json())
     elif query.data == "emergency_stop":
-        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Executing emergency stop", exec_func=ws_helper.emergency_stop_printer())
+        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Аварийное отключение выполнено", exec_func=ws_helper.emergency_stop_printer()) #my Executing emergency stop
     elif query.data == "firmware_restart":
-        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Restarting klipper firmware", exec_func=ws_helper.firmware_restart_printer())
+        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="klipper firmware перезагружен", exec_func=ws_helper.firmware_restart_printer()) #my Restarting klipper firmware
     elif query.data == "cancel_printing":
-        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Canceling printing", exec_func=ws_helper.manage_printing("cancel"))
+        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Печать отменена", exec_func=ws_helper.manage_printing("cancel")) #my Canceling printing
     elif query.data == "pause_printing":
-        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Pausing printing", exec_func=ws_helper.manage_printing("pause"))
+        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Печать на паузе", exec_func=ws_helper.manage_printing("pause")) #my Pausing printing
     elif query.data == "resume_printing":
-        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Resuming printing", exec_func=ws_helper.manage_printing("resume"))
+        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Печать продолжена", exec_func=ws_helper.manage_printing("resume")) #my Resuming printing
     elif query.data == "shutdown_host":
         await query.delete_message()
-        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Shutting down host", exec_func=ws_helper.shutdown_pi_host())
+        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Хост выключен", exec_func=ws_helper.shutdown_pi_host()) #my Shutting down host
     elif query.data == "reboot_host":
         await query.delete_message()
-        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Rebooting host", exec_func=ws_helper.reboot_pi_host())
+        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Хост перезагружен", exec_func=ws_helper.reboot_pi_host()) #my Rebooting host
     elif query.data == "bot_restart":
         await query.delete_message()
-        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="Restarting bot", exec_func=restart_bot())
+        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text="ТГ бот перезагружен", exec_func=restart_bot()) #my Restarting bot
     elif query.data == "power_off_printer":
         await psu_power_device.switch_device(False)
         if psu_power_device.device_error:
@@ -740,11 +740,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         )
     elif "macro:" in query.data:
         command = query.data.replace("macro:", "")
-        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text=f"Running macro: {command}", exec_func=ws_helper.execute_ws_gcode_script(command))
+        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text=f"Запуск макроса: {command}", exec_func=ws_helper.execute_ws_gcode_script(command)) #my Running macro: {command}
     elif "macroc:" in query.data:
         command = query.data.replace("macroc:", "")
         await query.edit_message_text(
-            text=f"Execute macro {command}?",
+            text=f"Выполнить макрос {command}?", #my Execute macro {command}?
             reply_markup=confirm_keyboard(f"macro:{command}"),
         )
         delete_query = False
@@ -764,20 +764,20 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             delete_query = True
         else:
             if query.message.text:
-                await query.edit_message_text(text=f"Failed start printing file {filename}")
+                await query.edit_message_text(text=f"Не удалось начать печать файла {filename}") #my Failed start printing file {filename}
             elif query.message.caption:
-                await query.message.edit_caption(caption=f"Failed start printing file {filename}")
+                await query.message.edit_caption(caption=f"Не удалось начать печать файла {filename}") #my Failed start printing file {filename}
             delete_query = False
     elif "rstrt_srvc:" in query.data:
         service_name = query.data.replace("rstrt_srvc:", "")
         await query.edit_message_text(
-            text=f'Restart service "{service_name}"?',
+            text=f'Перезапустить сервис "{service_name}"?', #my Restart service "{service_name}
             reply_markup=confirm_keyboard(f"rstrt_srv:{service_name}"),
         )
         delete_query = False
     elif "rstrt_srv:" in query.data:
         service_name = query.data.replace("rstrt_srv:", "")
-        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text=f"Restarting service: {service_name}", exec_func=ws_helper.restart_system_service(service_name))
+        await command_exec(effective_message=update.effective_message.reply_to_message, exec_text=f"Перезапуск сервиса: {service_name}", exec_func=ws_helper.restart_system_service(service_name)) #my Restarting service: {service_name}
     elif "logs_upload:" in query.data:
         await upload_logs_no_confirm(update.effective_message.reply_to_message)
     elif "send_logs:" in query.data:
@@ -808,7 +808,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 async def get_gcode_files_no_confirm(effective_message: Message) -> None:
     await effective_message.get_bot().send_chat_action(chat_id=configWrap.secrets.chat_id, action=ChatAction.TYPING)
     await effective_message.reply_text(
-        "Gcode files to print:",
+        "G-code файлы для печати:", #my Gcode files to print
         reply_markup=await gcode_files_keyboard(),
         disable_notification=notifier.silent_commands,
         quote=True,
@@ -929,7 +929,7 @@ async def get_macros_no_confirm(effective_message: Message) -> None:
     )
 
     await effective_message.reply_text(
-        "Gcode macros:",
+        "Доступные макросы:", #my Gcode macros
         reply_markup=InlineKeyboardMarkup(files_keys),
         disable_notification=notifier.silent_commands,
         quote=True,
@@ -1195,9 +1195,9 @@ async def greeting_message(bot: telegram.Bot) -> None:
         response = await klippy.check_connection()
         mess = ""
         if response:
-            mess += f"Bot online, no moonraker connection!\n {response} \nFailing..."
+            mess += f"Бот в сети, нет связи с moonraker!\n {response} \nFailing..." #my Bot online, no moonraker connection!\n {response} \nFailing...
         else:
-            mess += "Printer online on " + get_local_ip()
+            mess += "Принтер в сети по адресу " + get_local_ip() #my Printer online on 
             if configWrap.configuration_errors:
                 mess += await klippy.get_versions_info(bot_only=True) + configWrap.configuration_errors
 

@@ -338,7 +338,7 @@ class Notifier:
         if self._last_tgnotify_status and "tgnotify_status" in self._message_parts:
             mess += f"{escape_markdown(self._last_tgnotify_status, version=2)}\n"
         if "last_update_time" in self._message_parts:
-            mess += f"_Last update at {datetime.now():%H:%M:%S}_"
+            mess += f"_Обновлено в {datetime.now():%H:%M:%S}_" #my Last update at
 
         self._sched.add_job(
             self._notify,
@@ -422,7 +422,7 @@ class Notifier:
         self.remove_notifier_timer()
 
     async def _send_print_start_info(self) -> None:
-        message, bio = await self._klippy.get_file_info("Printer started printing")
+        message, bio = await self._klippy.get_file_info("Принтер начал печать") # my Printer started printing
         if bio is not None:
             status_message = await self._bot.send_photo(
                 self._chat_id,
@@ -462,7 +462,7 @@ class Notifier:
         # Todo: reset something? or check if reseted by setting new filename?
 
     async def _send_print_finish(self) -> None:
-        self._schedule_notification(message="Finished printing", finish=True)
+        self._schedule_notification(message="Печать завершена", finish=True) # my Finished printing
 
     def send_print_finish(self) -> None:
         if self._enabled:
