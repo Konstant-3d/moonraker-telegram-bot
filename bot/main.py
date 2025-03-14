@@ -245,7 +245,7 @@ async def get_video_no_confirm(effective_message: Message) -> None:
         await effective_message.reply_text("camera is disabled", quote=True)
     else:
         info_reply: Message = await effective_message.reply_text(
-            text="Starting video recording",
+            text="Видео записывается", #my Starting video recording
             disable_notification=notifier.silent_commands,
             quote=True,
         )
@@ -253,7 +253,7 @@ async def get_video_no_confirm(effective_message: Message) -> None:
 
         loop_loc = asyncio.get_running_loop()
         (video_bio, thumb_bio, width, height) = await loop_loc.run_in_executor(executors_pool, cameraWrap.take_video)
-        await info_reply.edit_text(text="Uploading video")
+        await info_reply.edit_text(text="Видео загружается") #my Uploading video
         max_upload_file_size: int = configWrap.bot_config.max_upload_file_size
         if video_bio.getbuffer().nbytes > max_upload_file_size * 1024 * 1024:
             await info_reply.edit_text(text=f"Telegram has a {max_upload_file_size}mb restriction...")
@@ -443,7 +443,7 @@ async def send_logs_no_confirm(effective_message: Message) -> None:
         return
 
     resp_message = await effective_message.reply_text(
-        "Collecting logs",
+        "Сбор журналов логов", #my Collecting logs
         disable_notification=notifier.silent_commands,
         quote=True,
     )
@@ -458,10 +458,10 @@ async def send_logs_no_confirm(effective_message: Message) -> None:
             logger.warning(err)
 
     if logs_list:
-        await resp_message.edit_text("Uploading logs")
+        await resp_message.edit_text("Загрузка логов") #my Uploading logs
         await effective_message.get_bot().send_chat_action(chat_id=configWrap.secrets.chat_id, action=ChatAction.UPLOAD_DOCUMENT)
         await effective_message.reply_media_group(logs_list, disable_notification=notifier.silent_commands, quote=True, write_timeout=120)
-        await resp_message.edit_text(text=f"{await klippy.get_versions_info()}\nUpload logs to analyzer /logs_upload")
+        await resp_message.edit_text(text=f"{await klippy.get_versions_info()}\nЗагрузить логи для анализа /logs_upload") #my Upload logs to analyzer
     else:
         await resp_message.edit_text(text=f"No logs found in log_path `{configWrap.bot_config.log_path}`")
 
@@ -472,14 +472,14 @@ async def send_logs(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     if configWrap.telegram_ui.is_present_in_require_confirmation("logs") or configWrap.telegram_ui.confirm_command():
-        await command_confirm_message(update, text="Send logs to chat?", callback_mess="send_logs:")
+        await command_confirm_message(update, text="Отправить логи в чат?", callback_mess="send_logs:") #my Send logs to chat
     else:
         await send_logs_no_confirm(update.effective_message)
 
 
 async def upload_logs_no_confirm(effective_message: Message) -> None:
     resp_message = await effective_message.reply_text(
-        "Collecting logs",
+        "Сбор журналов логов", #my Collecting logs
         disable_notification=notifier.silent_commands,
         quote=True,
     )
@@ -505,7 +505,7 @@ async def upload_logs_no_confirm(effective_message: Message) -> None:
         if resp.status_code < 400:
             logs_path = resp.headers["location"]
             logger.info(logs_path)
-            await resp_message.edit_text(f"Logs are available at https://coderus.openrepos.net{logs_path}")
+            await resp_message.edit_text(f"Логи доступны по ссылке https://coderus.openrepos.net{logs_path}") #my Logs are available at
         else:
             logger.error(resp.status_code)
             await resp_message.edit_text(f"Logs upload failed `{resp.status_code}`")
@@ -517,7 +517,7 @@ async def upload_logs(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     if configWrap.telegram_ui.is_present_in_require_confirmation("logs_upload") or configWrap.telegram_ui.confirm_command():
-        await command_confirm_message(update, text="Upload logs?", callback_mess="logs_upload:")
+        await command_confirm_message(update, text="Загрузить логи?", callback_mess="logs_upload:") #my Upload logs
     else:
         await upload_logs_no_confirm(update.effective_message)
 
@@ -1116,26 +1116,26 @@ def create_keyboard():
 
 def bot_commands() -> Dict[str, str]:
     commands = {
-        "help": "list bot commands",
-        "status": "send klipper status",
-        "ip": "send private ip of the bot installation",
-        "video": "record and upload a video",
-        "pause": "pause printing",
-        "resume": "resume printing",
-        "cancel": "cancel printing",
-        "power": "toggle moonraker power device from config",
-        "light": "toggle light",
-        "emergency": "emergency stop printing",
-        "shutdown": "shutdown bot host gracefully",
-        "reboot": "reboot bot host gracefully",
-        "bot_restart": "restarts the bot service, useful for config updates",
-        "fw_restart": "Execute klipper FIRMWARE_RESTART",
-        "services": "List services and restart them",
-        "files": "list available gcode files",
-        "macros": "list all visible macros from klipper",
-        "gcode": 'run any gcode command, spaces are supported. "gcode G28 Z"',
-        "logs": "get klipper, moonraker, bot logs",
-        "logs_upload": "upload logs to analyzer",
+        "help": "Список команд бота", #my list bot commands
+        "status": "Узнать стату принтера", #my send klipper status
+        "ip": "Узнать ip адрес принтера", #my send private ip of the bot installation
+        "video": "Записать видео", #my record and upload a video
+        "pause": "Поставить печать на паузу", #my pause printing
+        "resume": "Продолжить печать", #my resume printing
+        "cancel": "Отменить печать", #my cancel printing
+        "power": "Переключить питание принтера", #my toggle moonraker power device from config
+        "light": "Переключающий свет???", #my toggle light
+        "emergency": "Аварийная остановка принтера", #my emergency stop printing
+        "shutdown": "Выключить хост", #my shutdown bot host gracefully
+        "reboot": "Перезагрузить хост", #my reboot bot host gracefully
+        "bot_restart": "Перезагрузить ТГ бота", #my restarts the bot service, useful for config updates
+        "fw_restart": "Перезагрузить klipper", #my Execute klipper FIRMWARE_RESTART
+        "services": "Список служб и их перезапуск", #my List services and restart them
+        "files": "Список доступных G-code файлов для печати", #my list available gcode files
+        "macros": "Список доступных макросов", #my list all visible macros from klipper
+        "gcode": 'Выполнить команду G-code (Допускаются пробелы)', #my run any gcode command, spaces are supported. "gcode G28 Z"
+        "logs": "Получить логи klipper, moonraker, TG bot", #my get klipper, moonraker, bot logs
+        "logs_upload": "Загрузить логи для анализа", #my upload logs to analyzer
     }
     return {c: a for c, a in commands.items() if c not in configWrap.telegram_ui.hidden_bot_commands}
 

@@ -278,7 +278,7 @@ class CameraConfig(ConfigHelper):
         # self.threads: int = self._getint( "threads", fallback=int(len(os.sched_getaffinity(0)) / 2)) #Fixme:
         self.threads: int = self._get_int("threads", default=2, min_value=0)  # Fixme: fix default calcs! add check max value cpu count
 
-        self.video_duration: int = self._get_int("video_duration", default=5, above=0)
+        self.video_duration: int = self._get_int("video_duration", default=7, above=0) #my default=5
         self.video_buffer_size: int = self._get_int("video_buffer_size", default=2, above=0)
         self.light_timeout: int = self._get_int("light_control_timeout", default=0, min_value=0)
         self.picture_quality: str = self._get_str("picture_quality", default="high", allowed_values=["low", "high"])
